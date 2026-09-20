@@ -1,0 +1,102 @@
+:root {
+  font-family: Arial, sans-serif;
+  color: #1f2933;
+  background: #f3f6f4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+}
+
+main {
+  max-width: 760px;
+  margin: 48px auto;
+  padding: 32px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(31, 41, 51, 0.12);
+}
+
+h1 {
+  margin: 0;
+  color: #176b4d;
+  font-size: 40px;
+  line-height: 1.2;
+}
+
+main > p {
+  margin : 12px 0 0;
+  color: #52605a;
+  line-height: 1.5;
+}
+
+section {
+  margin-top: 32px;
+}
+
+label {
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #b9c6bf;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+button {
+  margin-top: 16px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  background: #176b4d;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #dce5df;
+  text-align: left;
+}
+
+th {
+  background: #e9f4ed;
+}
+
+.error-message {
+  color: #b23a32;
+  font-weight: 700;
+}
+
+td {
+  vertical-align: middle;
+}
+
+td button {
+  margin-top: 0;
+  padding: 6px 12px;
+  background: #b23a32;
+  font-size: 14px;
+}
