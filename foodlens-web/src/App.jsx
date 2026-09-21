@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 function App() {
@@ -7,8 +7,17 @@ function App() {
   const [servingUnit, setServingUnit] = useState('g')
   const [calories, setCalories] = useState('')
   const [protein, setProtein] = useState('')
-  const [products, setProducts] = useState([])
+  const [sugar, setSugar] = useState('')
+    const [fat, setFat] = useState('')
+  const [products, setProducts] = useState(() => {
+  const savedProducts = localStorage.getItem('foodlens-products')
+
+    return savedProducts ? JSON.parse(savedProducts) : []
+  })
   const [errorMessage, setErrorMessage] = useState('')
+   useEffect(() => {
+      localStorage.setItem('foodlens-products', JSON.stringify(products))
+  }, [products])
 
   function addProduct() {
     const numericServingSize = Number(servingSize)
@@ -23,8 +32,8 @@ function App() {
       return
     }
 
-    if (calories === '' || protein === '') {
-      setErrorMessage('열량과 단백질 값을 모두 입력하세요.')
+          if (calories === '' || fat === '' || sugar === '' || protein === '') {
+      setErrorMessage('열량, 지방, 당류, 단백질 값을 모두 입력하세요.')
       return
     }
 
@@ -33,7 +42,9 @@ function App() {
       servingSize,
       servingUnit,
       calories,
+      sugar,
       protein,
+      fat,
     }
 
     setProducts([...products, newProduct])
@@ -41,7 +52,9 @@ function App() {
     setServingSize('')
     setServingUnit('g')
     setCalories('')
+    setSugar('')
     setProtein('')
+    setFat('')
     setErrorMessage('')
   }
 
@@ -51,9 +64,9 @@ function App() {
     )
   }
 
-  function calculatePer100(value, servingSize) {
+  function calculatePer100(value, currentServingSize) {
     const numericValue = Number(value)
-    const numericServingSize = Number(servingSize)
+    const numericServingSize = Number(currentServingSize)
 
     if (!numericServingSize) {
       return '–'
@@ -106,6 +119,26 @@ function App() {
           placeholder="예: 150"
         />
 
+        <label htmlFor="fat">지방 (g)</label>
+        <input
+          id="fat"
+          type="number"
+          min="0"
+          value={fat}
+          onChange={(event) => setFat(event.target.value)}
+          placeholder="예: 3"
+        />
+
+        <label htmlFor="sugar">당류 (g)</label>
+        <input
+          id="sugar"
+          type="number"
+          min="0"
+          value={sugar}
+          onChange={(event) => setSugar(event.target.value)}
+          placeholder="예: 5"
+        />
+
         <label htmlFor="protein">단백질 (g)</label>
         <input
           id="protein"
@@ -139,6 +172,8 @@ function App() {
                 <th>제품명</th>
                 <th>표시 기준량</th>
                 <th>100단위당 열량</th>
+                <th>100단위당 지방</th>
+                <th>100단위당 당류</th>
                 <th>100단위당 단백질</th>
                 <th>관리</th>
               </tr>
@@ -158,9 +193,24 @@ function App() {
                     )}{' '}
                     kcal / 100{product.servingUnit}
                   </td>
+                                    <td>
+                                    
+                    {calculatePer100(
+                      product.sugar,
+                      product.servingSize
+                    )}{' '}
+                    g / 100{product.servingUnit}
+                  </td>
                   <td>
                     {calculatePer100(
                       product.protein,
+                      product.servingSize
+                    )}{' '}
+                    g / 100{product.servingUnit}
+                  </td>
+                  <td>
+                    {calculatePer100(
+                      product.fat,
                       product.servingSize
                     )}{' '}
                     g / 100{product.servingUnit}

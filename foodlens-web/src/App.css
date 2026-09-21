@@ -100,3 +100,19 @@ td button {
   background: #b23a32;
   font-size: 14px;
 }
+
+table {
+  font-size: 14px;
+}
+
+th,
+td {
+  padding: 10px 8px;
+  white-space: nowrap;
+}
+
+th,
+td {
+  text-align: center;
+  vertical-align: middle;
+}
