@@ -8,7 +8,8 @@ function App() {
   const [calories, setCalories] = useState('')
   const [protein, setProtein] = useState('')
   const [sugar, setSugar] = useState('')
-    const [fat, setFat] = useState('')
+  const [fat, setFat] = useState('')
+  const [sodium, setSodium] = useState('')
   const [products, setProducts] = useState(() => {
   const savedProducts = localStorage.getItem('foodlens-products')
 
@@ -32,8 +33,14 @@ function App() {
       return
     }
 
-          if (calories === '' || fat === '' || sugar === '' || protein === '') {
-      setErrorMessage('열량, 지방, 당류, 단백질 값을 모두 입력하세요.')
+    if (
+      calories === '' ||
+      fat === '' ||
+      sugar === '' ||
+      sodium === '' ||
+      protein === ''
+    ) {
+      setErrorMessage('열량, 지방, 당류, 나트륨, 단백질 값을 모두 입력하세요.')
       return
     }
 
@@ -42,9 +49,10 @@ function App() {
       servingSize,
       servingUnit,
       calories,
-      sugar,
-      protein,
       fat,
+      sugar,
+      sodium,
+      protein,
     }
 
     setProducts([...products, newProduct])
@@ -52,9 +60,10 @@ function App() {
     setServingSize('')
     setServingUnit('g')
     setCalories('')
-    setSugar('')
-    setProtein('')
     setFat('')
+    setSugar('')
+    setSodium('')
+    setProtein('')
     setErrorMessage('')
   }
 
@@ -139,6 +148,16 @@ function App() {
           placeholder="예: 5"
         />
 
+        <label htmlFor="sodium">나트륨 (mg)</label>
+        <input
+          id="sodium"
+          type="number"
+          min="0"
+          value={sodium}
+          onChange={(event) => setSodium(event.target.value)}
+          placeholder="예: 300"
+        />
+
         <label htmlFor="protein">단백질 (g)</label>
         <input
           id="protein"
@@ -166,6 +185,7 @@ function App() {
         {products.length === 0 ? (
           <p>아직 추가한 제품이 없습니다.</p>
         ) : (
+        <div className="table-container">
           <table>
             <thead>
               <tr>
@@ -174,59 +194,74 @@ function App() {
                 <th>100단위당 열량</th>
                 <th>100단위당 지방</th>
                 <th>100단위당 당류</th>
+                <th>100단위당 나트륨</th>
                 <th>100단위당 단백질</th>
                 <th>관리</th>
               </tr>
             </thead>
 
-            <tbody>
-              {products.map((product, index) => (
-                <tr key={`${product.name}-${index}`}>
-                  <td>{product.name}</td>
-                  <td>
-                    {product.servingSize} {product.servingUnit}
-                  </td>
-                  <td>
-                    {calculatePer100(
-                      product.calories,
-                      product.servingSize
-                    )}{' '}
-                    kcal / 100{product.servingUnit}
-                  </td>
-                                    <td>
-                                    
-                    {calculatePer100(
-                      product.sugar,
-                      product.servingSize
-                    )}{' '}
-                    g / 100{product.servingUnit}
-                  </td>
-                  <td>
-                    {calculatePer100(
-                      product.protein,
-                      product.servingSize
-                    )}{' '}
-                    g / 100{product.servingUnit}
-                  </td>
-                  <td>
-                    {calculatePer100(
-                      product.fat,
-                      product.servingSize
-                    )}{' '}
-                    g / 100{product.servingUnit}
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      onClick={() => removeProduct(index)}
-                    >
-                      삭제
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+       <tbody>
+  {products.map((product, index) => (
+    <tr key={`${product.name}-${index}`}>
+      <td>{product.name}</td>
+
+      <td>
+        {product.servingSize} {product.servingUnit}
+      </td>
+
+      <td>
+        {calculatePer100(
+          product.calories,
+          product.servingSize
+        )}{' '}
+        kcal / 100{product.servingUnit}
+      </td>
+
+      <td>
+        {calculatePer100(
+          product.fat,
+          product.servingSize
+        )}{' '}
+        g / 100{product.servingUnit}
+      </td>
+
+      <td>
+        {calculatePer100(
+          product.sugar,
+          product.servingSize
+        )}{' '}
+        g / 100{product.servingUnit}
+      </td>
+
+      <td>
+        {calculatePer100(
+          product.sodium,
+          product.servingSize
+        )}{' '}
+        mg / 100{product.servingUnit}
+      </td>
+
+      <td>
+        {calculatePer100(
+          product.protein,
+          product.servingSize
+        )}{' '}
+        g / 100{product.servingUnit}
+      </td>
+
+      <td>
+        <button
+          type="button"
+          onClick={() => removeProduct(index)}
+        >
+          삭제
+        </button>
+      </td>
+    </tr>
+  ))}
+</tbody>
           </table>
+        </div>
         )}
       </section>
     </main>
