@@ -3,6 +3,7 @@ import './App.css'
 
 function App() {
   const [productName, setProductName] = useState('')
+  const [category, setCategory] = useState('음료')
   const [servingSize, setServingSize] = useState('')
   const [servingUnit, setServingUnit] = useState('g')
   const [calories, setCalories] = useState('')
@@ -16,15 +17,19 @@ function App() {
     return savedProducts ? JSON.parse(savedProducts) : []
   })
   const [errorMessage, setErrorMessage] = useState('')
-    const [unitFilter, setUnitFilter] = useState('all')
-      const [sortOption, setSortOption] = useState('default')
-        const [editingProduct, setEditingProduct] = useState(null)
-          const [chartMetric, setChartMetric] = useState('protein')
-  const displayedProducts = products.filter(
-    (product) =>
-      unitFilter === 'all' || product.servingUnit === unitFilter
-  )
+  const [unitFilter, setUnitFilter] = useState('all')
+  const [sortOption, setSortOption] = useState('default')
+  const [editingProduct, setEditingProduct] = useState(null)
+  const [chartMetric, setChartMetric] = useState('protein')
+  const [searchTerm, setSearchTerm] = useState('')
 
+    const displayedProducts = products.filter(
+    (product) =>
+      (unitFilter === 'all' || product.servingUnit === unitFilter) &&
+      product.name
+        .toLowerCase()
+        .includes(searchTerm.trim().toLowerCase())
+  )
    const sortedProducts = [...displayedProducts].sort(
     (firstProduct, secondProduct) => {
       if (unitFilter === 'all' || sortOption === 'default') {
@@ -103,16 +108,17 @@ function App() {
     }
 
     const newProduct = {
-      name: productName,
-      servingSize,
-      servingUnit,
-      calories,
-      fat,
-      sugar,
-      sodium,
-      protein,
-    }
-
+  name: productName,
+  category,
+  servingSize,
+  servingUnit,
+  calories,
+  fat,
+  sugar,
+  sodium,
+  protein,
+}
+   
         if (editingProduct) {
       setProducts(
         products.map((product) =>
@@ -223,8 +229,20 @@ function App() {
 
   return (
     <main>
-      <h1>FoodLens</h1>
-      <p>식품 제품 비교를 위한 R&D 분석 도구</p>
+     <header className="hero">
+  <div>
+    <p className="hero-eyebrow">FOOD DATA WORKSPACE</p>
+    <h1>FoodLens</h1>
+    <p className="hero-description">
+      식품을 같은 기준으로 비교하고 영양성분을 분석하는 도구
+    </p>
+  </div>
+
+  <div className="hero-badge">
+    <span>ANALYSIS MODE</span>
+    <strong>제품 비교 · 영양 분석</strong>
+  </div>
+</header>
                   <section className="summary-section">
         <article className="summary-card summary-card-primary">
           <p className="summary-label">등록 제품</p>
@@ -245,8 +263,18 @@ function App() {
         </article>
       </section>
 
-      <section>
-        <h2>제품 추가</h2>
+      <section className="entry-section">
+  <div className="section-heading">
+    <div>
+      <p className="section-kicker">MANUAL ENTRY</p>
+      <h2>제품 등록</h2>
+      <p className="section-description">
+        제품 라벨의 영양성분 정보를 입력해 비교 목록에 추가하세요.
+      </p>
+    </div>
+
+    <span className="input-status">수동 입력</span>
+  </div>
 
         <label htmlFor="product-name">제품명</label>
         <input
@@ -256,74 +284,107 @@ function App() {
           placeholder="예: 단백질 음료"
         />
 
-        <label htmlFor="serving-size">표시 기준량</label>
-        <input
-          id="serving-size"
-          type="number"
-          value={servingSize}
-          onChange={(event) => setServingSize(event.target.value)}
-          placeholder="예: 250"
-        />
+        <div className="basic-info-grid">
+  <div className="field-group">
+    <label htmlFor="category">카테고리</label>
+    <select
+      id="category"
+      value={category}
+      onChange={(event) => setCategory(event.target.value)}
+    >
+      <option value="음료">음료</option>
+      <option value="유제품">유제품</option>
+      <option value="간편식">간편식</option>
+      <option value="스낵">스낵</option>
+      <option value="기타">기타</option>
+    </select>
+  </div>
 
-        <label htmlFor="serving-unit">기준량 단위</label>
-        <select
-          id="serving-unit"
-          value={servingUnit}
-          onChange={(event) => setServingUnit(event.target.value)}
-        >
-          <option value="g">g</option>
-          <option value="mL">mL</option>
-        </select>
+  <div className="field-group">
+    <label htmlFor="serving-size">표시 기준량</label>
+    <input
+      id="serving-size"
+      type="number"
+      value={servingSize}
+      onChange={(event) => setServingSize(event.target.value)}
+      placeholder="예: 250"
+    />
+  </div>
 
-        <label htmlFor="calories">열량 (kcal)</label>
-        <input
-          id="calories"
-          type="number"
-          value={calories}
-          onChange={(event) => setCalories(event.target.value)}
-          placeholder="예: 150"
-        />
+  <div className="field-group">
+    <label htmlFor="serving-unit">기준량 단위</label>
+    <select
+      id="serving-unit"
+      value={servingUnit}
+      onChange={(event) => setServingUnit(event.target.value)}
+    >
+      <option value="g">g</option>
+      <option value="mL">mL</option>
+    </select>
+  </div>
+</div>
 
-        <label htmlFor="fat">지방 (g)</label>
-        <input
-          id="fat"
-          type="number"
-          min="0"
-          value={fat}
-          onChange={(event) => setFat(event.target.value)}
-          placeholder="예: 3"
-        />
+        <div className="nutrition-grid">
+  <div className="field-group">
+    <label htmlFor="calories">열량 (kcal)</label>
+    <input
+      id="calories"
+      type="number"
+      value={calories}
+      onChange={(event) => setCalories(event.target.value)}
+      placeholder="예: 150"
+    />
+  </div>
 
-        <label htmlFor="sugar">당류 (g)</label>
-        <input
-          id="sugar"
-          type="number"
-          min="0"
-          value={sugar}
-          onChange={(event) => setSugar(event.target.value)}
-          placeholder="예: 5"
-        />
+  <div className="field-group">
+    <label htmlFor="fat">지방 (g)</label>
+    <input
+      id="fat"
+      type="number"
+      min="0"
+      value={fat}
+      onChange={(event) => setFat(event.target.value)}
+      placeholder="예: 3"
+    />
+  </div>
 
-        <label htmlFor="sodium">나트륨 (mg)</label>
-        <input
-          id="sodium"
-          type="number"
-          min="0"
-          value={sodium}
-          onChange={(event) => setSodium(event.target.value)}
-          placeholder="예: 300"
-        />
+  <div className="field-group">
+    <label htmlFor="sugar">당류 (g)</label>
+    <input
+      id="sugar"
+      type="number"
+      min="0"
+      value={sugar}
+      onChange={(event) => setSugar(event.target.value)}
+      placeholder="예: 5"
+    />
+  </div>
 
-        <label htmlFor="protein">단백질 (g)</label>
-        <input
-          id="protein"
-          type="number"
-          value={protein}
-          onChange={(event) => setProtein(event.target.value)}
-          placeholder="예: 20"
-        />
+  <div className="field-group">
+    <label htmlFor="sodium">나트륨 (mg)</label>
+    <input
+      id="sodium"
+      type="number"
+      min="0"
+      value={sodium}
+      onChange={(event) => setSodium(event.target.value)}
+      placeholder="예: 300"
+    />
+  </div>
 
+  <div className="field-group">
+    <label htmlFor="protein">단백질 (g)</label>
+    <input
+      id="protein"
+      type="number"
+      value={protein}
+      onChange={(event) => setProtein(event.target.value)}
+      placeholder="예: 20"
+    />
+   </div>
+  </div>
         <button type="button" onClick={addProduct}>
+        
           {editingProduct ? '제품 수정 완료' : '제품 목록에 추가'}
         </button>
                 {editingProduct && (
@@ -343,49 +404,91 @@ function App() {
         )}
       </section>
 
-      <section>
-        <h2>100단위 기준 비교</h2>
-        <p>g 기준 제품과 mL 기준 제품은 직접 비교하지 마세요.</p>
-               <div className="filter-bar">
-          <label htmlFor="unit-filter">비교 기준</label>
-          <select
-            id="unit-filter"
-            value={unitFilter}
-            onChange={(event) => setUnitFilter(event.target.value)}
-          >
-            <option value="all">전체 보기</option>
-            <option value="g">g 기준 제품만</option>
-            <option value="mL">mL 기준 제품만</option>
-          </select>
+      <section className="analysis-section">
+  <div className="analysis-heading">
+    <div>
+      <p className="section-kicker">COMPARISON TABLE</p>
+      <h2>100단위 기준 비교</h2>
+      <p className="section-description">
+        g 기준 제품과 mL 기준 제품은 서로 분리해서 비교하세요.
+      </p>
+    </div>
 
-          <label htmlFor="sort-option">정렬</label>
-          <select
-            id="sort-option"
-            value={sortOption}
-            onChange={(event) => setSortOption(event.target.value)}
-            disabled={unitFilter === 'all'}
-          >
-            <option value="default">등록 순서</option>
-            <option value="protein">단백질 높은 순</option>
-            <option value="calories">열량 낮은 순</option>
-            <option value="sugar">당류 높은 순</option>
-            <option value="sodium">나트륨 높은 순</option>
-          </select>
-        </div>
-                <div className="comparison-actions">
-          <button
-            type="button"
-            className="export-button"
-            onClick={exportProductsToCsv}
-            disabled={products.length === 0}
-          >
-            CSV로 내보내기
-          </button>
-        </div>
+    <span className="analysis-status">기준값 환산</span>
+  </div>
+         <div className="analysis-toolbar">
+  <div className="toolbar-search">
+    <label htmlFor="product-search">등록 제품 검색</label>
+    <div className="search-input-wrap">
+  <input
+    id="product-search"
+    type="search"
+    value={searchTerm}
+    onChange={(event) => setSearchTerm(event.target.value)}
+    placeholder="등록한 제품명으로 검색"
+  />
+
+  {searchTerm && (
+    <button
+      type="button"
+      className="clear-search-button"
+      onClick={() => setSearchTerm('')}
+      aria-label="검색어 지우기"
+    >
+      ×
+    </button>
+  )}
+</div>
+</div>
+  <div className="toolbar-filter">
+    <label htmlFor="unit-filter">비교 기준</label>
+    <select
+      id="unit-filter"
+      value={unitFilter}
+      onChange={(event) => setUnitFilter(event.target.value)}
+    >
+      <option value="all">전체 보기</option>
+      <option value="g">g 기준 제품만</option>
+      <option value="mL">mL 기준 제품만</option>
+    </select>
+  </div>
+
+  <div className="toolbar-filter">
+    <label htmlFor="sort-option">정렬</label>
+    <select
+      id="sort-option"
+      value={sortOption}
+      onChange={(event) => setSortOption(event.target.value)}
+      disabled={unitFilter === 'all'}
+    >
+      <option value="default">등록 순서</option>
+      <option value="protein">단백질 높은 순</option>
+      <option value="calories">열량 낮은 순</option>
+      <option value="sugar">당류 높은 순</option>
+      <option value="sodium">나트륨 높은 순</option>
+    </select>
+  </div>
+
+  <div className="toolbar-export">
+    <button
+      type="button"
+      className="export-button"
+      onClick={exportProductsToCsv}
+      disabled={products.length === 0}
+    >
+      CSV로 내보내기
+    </button>
+  </div>
+</div>
         {products.length === 0 ? (
-          <p>아직 추가한 제품이 없습니다.</p>
-        ) : (
-        <div className="table-container">
+  <p>아직 추가한 제품이 없습니다.</p>
+) : sortedProducts.length === 0 ? (
+  <div className="empty-search-result">
+    <strong>검색 결과가 없습니다.</strong>
+    <p>다른 제품명이나 비교 기준을 선택해보세요.</p>
+  </div>
+) : (
+  <div className="table-container">
           <table>
             <thead>
               <tr>
